@@ -4,10 +4,28 @@
     android:layout_height="match_parent"
     tools:context="com.plplim.david.calendar.fragment.TodoFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="todo fragment" />
+        android:orientation="vertical">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/todofragment_calendarview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            >
+
+        </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+
+        <ListView
+            android:id="@+id/todofragment_listview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:dividerHeight="10dp"
+            android:divider="#ffffff"></ListView>
+
+    </LinearLayout>
 
 </FrameLayout>
