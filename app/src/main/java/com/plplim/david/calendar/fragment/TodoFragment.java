@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,12 @@ import android.widget.ListView;
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
+import com.plplim.david.calendar.util.RequestHandler;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,7 +30,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -34,7 +45,7 @@ import java.util.List;
  * Use the {@link TodoFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class TodoFragment extends Fragment {
+public class TodoFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -84,15 +95,54 @@ public class TodoFragment extends Fragment {
     private TodoListAdapter todoListAdapter;
     private List<Todo> todoList;
 
+    //Create CalendarView
+    private MaterialCalendarView materialCalendarView;
+    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
+    private RequestHandler requestHandler = new RequestHandler();
     @Override
     public void onActivityCreated(Bundle b) {
         super.onActivityCreated(b);
         Log.e("TodoFragment", "onActivityCreated TodoFragment");
         todoListview = (ListView) getView().findViewById(R.id.todofragment_listview);
         todoList = new ArrayList<Todo>();
+        materialCalendarView = (MaterialCalendarView) getView().findViewById(R.id.todofragment_calendarview);
 
-        new BackgroundTask().execute();
+        //init Calendar
+        materialCalendarView.setOnDateChangedListener(this);
+        materialCalendarView.setOnMonthChangedListener(this);
+        materialCalendarView.setShowOtherDates(MaterialCalendarView.SHOW_ALL);
+
+        materialCalendarView.state().edit()
+                .setFirstDayOfWeek(Calendar.SUNDAY)
+                .setMinimumDate(CalendarDay.from(1992, 1, 1))
+                .setMaximumDate(CalendarDay.from(2100, 12, 31))
+                .setCalendarDisplayMode(CalendarMode.MONTHS)
+                .commit();
+
+        //new BackgroundTask().execute();
     }
+
+    @Override
+    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+        new BackgroundTask().execute(getSelecteDateString());
+    }
+
+    @Override
+    public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+
+    }
+
+    private String getSelecteDateString(){
+        CalendarDay date = materialCalendarView.getSelectedDate();
+        if(date == null)
+            return "No Selection";
+
+        //String getData = FORMATTER.format(date.getDate());
+        String getDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
+
+        return getDate;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,7 +179,7 @@ public class TodoFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-    class BackgroundTask extends AsyncTask<Void, Void, String> {
+    class BackgroundTask extends AsyncTask<String, Void, String> {
 
         String target;
         @Override
@@ -138,7 +188,15 @@ public class TodoFragment extends Fragment {
         }
 
         @Override
-        protected String doInBackground(Void... voids) {
+        protected String doInBackground(String... params) {
+            HashMap<String, String> data = new HashMap<>();
+
+            String query = params[0];
+
+            data.put("date", query);
+
+            String result = requestHandler.sendPostRequest(target, data);
+
             try {
                 URL url = new URL(target);
                 HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
