@@ -16,6 +16,8 @@ import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
+import com.plplim.david.calendar.util.SaturdayDecorator;
+import com.plplim.david.calendar.util.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
@@ -119,6 +121,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                 .setCalendarDisplayMode(CalendarMode.MONTHS)
                 .commit();
 
+        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
         //new BackgroundTask().execute();
     }
 

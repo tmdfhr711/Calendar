@@ -1,29 +1,45 @@
 package com.plplim.david.calendar.fragment;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.plplim.david.calendar.R;
+import com.plplim.david.calendar.activity.RegisterActivity;
+import com.plplim.david.calendar.adapter.TodoListAdapter;
+import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
+import com.plplim.david.calendar.util.SaturdayDecorator;
+import com.plplim.david.calendar.util.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.CalendarMode;
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +49,7 @@ import java.text.SimpleDateFormat;
  * Use the {@link AddFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener {
+public class AddFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener,TimePicker.OnTimeChangedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -87,6 +103,9 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
     private CheckBox shareCheck;
     private Button addButton, detailButton;
 
+    private AlertDialog dialog;
+
+    private int selectedDay = 0, selectedMonth = 0, selectedYear = 0, selectedHour = 0, selectedMinute = 0;
     @Override
     public void onActivityCreated(Bundle b) {
         super.onActivityCreated(b);
@@ -101,33 +120,84 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         addButton = (Button) getView().findViewById(R.id.addfragment_button_add);
         detailButton = (Button) getView().findViewById(R.id.addfragment_button_detail);
 
-        //detailLayout.setVisibility(View.VISIBLE);
+        timePicker.setIs24HourView(false);
+        timePicker.setOnTimeChangedListener(this);
+
+        materialCalendarView.setOnDateChangedListener(this);
+        materialCalendarView.setOnMonthChangedListener(this);
+        materialCalendarView.setShowOtherDates(MaterialCalendarView.SHOW_ALL);
+
+        materialCalendarView.state().edit()
+                .setFirstDayOfWeek(Calendar.SUNDAY)
+                .setMinimumDate(CalendarDay.from(1992, 1, 1))
+                .setMaximumDate(CalendarDay.from(2100, 12, 31))
+                .setCalendarDisplayMode(CalendarMode.MONTHS)
+                .commit();
+
+        materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getView().getContext(), "일정 등록", Toast.LENGTH_SHORT).show();
+                if (selectedHour <= 0 || selectedMinute <= 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("먼저 시간을 선택해주세요")
+                            .setNegativeButton("확인", null)
+                            .create();
+                    dialog.show();
+                    return;
+                }
+
+                if (titleText.getText().toString().equals("") || contentText.getText().toString().equals("")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("모든 정보를 입력해주세요")
+                            .setNegativeButton("확인", null)
+                            .create();
+                    dialog.show();
+                    return;
+                }
+
+                new BackgroundTask().execute();
             }
         });
 
         detailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (selectedDay <= 0 || selectedMonth <= 0 || selectedYear <= 0) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("먼저 날짜를 선택해주세요")
+                            .setNegativeButton("확인", null)
+                            .create();
+                    dialog.show();
+                    return;
+                }
                 calendarLayout.setVisibility(View.GONE);
                 detailLayout.setVisibility(View.VISIBLE);
             }
         });
 
 
+
+
     }
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-
+        selectedYear = date.getYear();
+        selectedMonth = date.getMonth();
+        selectedDay = date.getDay();
     }
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
 
+    }
+
+    @Override
+    public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
+        selectedHour = hourOfDay;
+        selectedMinute = minute;
     }
 
     @Override
@@ -164,5 +234,69 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    class BackgroundTask extends AsyncTask<Void, Void, String> {
+
+        String target;
+        String date, time, title, content,share;
+        @Override
+        protected void onPreExecute() {
+            target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/AddTodo.php";
+            date = String.valueOf(selectedYear) + "/" + String.valueOf(selectedMonth) + "/" + String.valueOf(selectedDay);
+            time = String.valueOf(selectedHour) + ":" + String.valueOf(selectedMinute);
+            if (shareCheck.isChecked()) {
+                share = "1";
+            } else {
+                share = "0";
+            }
+            title = titleText.getText().toString();
+            content = contentText.getText().toString();
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            HashMap<String, String> data = new HashMap<>();
+
+            data.put("date", date);
+            data.put("time", time);
+            data.put("title", title);
+            data.put("content", content);
+            data.put("userID", "a");
+            data.put("group", "a");
+            data.put("share", share);
+
+            String result = requestHandler.sendPostRequest(target, data);
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonResponse = new JSONObject(result);
+                boolean success = jsonResponse.getBoolean("success");
+                if (success) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("일정 등록에 성공했습니다")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                }
+                            })
+                            .create();
+                    dialog.show();
+
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("일정 등록에 실패했습니다")
+                            .setNegativeButton("확인", null)
+                            .create();
+                    dialog.show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
