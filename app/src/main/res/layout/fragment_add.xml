@@ -4,10 +4,108 @@
     android:layout_height="match_parent"
     tools:context="com.plplim.david.calendar.fragment.AddFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/addfragment_linearlayout_calendarlayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="add fragment" />
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/addfragment_calendarview_date"
+            android:layout_width="match_parent"
+            android:layout_height="400dp"
+            android:layout_gravity="center_vertical"
+            android:padding="10dp">
+
+        </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+
+        <Button
+            android:id="@+id/addfragment_button_detail"
+            android:layout_margin="10dp"
+            android:text="세부사항 입력하기"
+            android:textSize="15dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:background="@color/colorPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/addfragment_linearlayout_detaillayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <TextView
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:text="등록할 일정의 시간을 설정하세요"
+            android:background="@color/colorPrimary"
+            android:textColor="#ffffff"
+            android:textSize="15dp"
+            android:textStyle="bold"
+            android:padding="10dp"
+            android:drawableLeft="@drawable/ic_watch_later_black_24dp"
+            android:drawableStart="@drawable/ic_watch_later_black_24dp"
+            android:gravity="center"/>
+        <TimePicker
+            android:id="@+id/addfragment_timepicker_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:timePickerMode="spinner"></TimePicker>
+
+        <EditText
+            android:id="@+id/addfragment_edittext_title"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_textsms_black_24dp"
+            android:drawableStart="@drawable/ic_textsms_black_24dp"
+            android:hint="제목을 입력하세요"
+            android:padding="10dp"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+
+        <EditText
+            android:id="@+id/addfragment_edittext_content"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimary"
+            android:drawableLeft="@drawable/ic_font_download_black_24dp"
+            android:drawableStart="@drawable/ic_font_download_black_24dp"
+            android:hint="내용을 입력하세요"
+            android:padding="10dp"
+            android:textColor="#ffffff"
+            android:textColorHint="#ffffff" />
+
+        <CheckBox
+            android:id="@+id/addfragment_checkbox_share"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:text="공유여부" />
+
+        <Button
+            android:id="@+id/addfragment_button_add"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:background="@color/colorPrimaryDark"
+            android:text="등록하기 "
+            android:textColor="#ffffff"
+            android:textSize="20dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
 </FrameLayout>

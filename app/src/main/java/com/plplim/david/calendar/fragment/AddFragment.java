@@ -4,11 +4,26 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.plplim.david.calendar.R;
+import com.plplim.david.calendar.util.RequestHandler;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
+import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
+import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,7 +33,7 @@ import com.plplim.david.calendar.R;
  * Use the {@link AddFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class AddFragment extends Fragment {
+public class AddFragment extends Fragment implements OnDateSelectedListener, OnMonthChangedListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,6 +74,60 @@ public class AddFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+
+    private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
+    private RequestHandler requestHandler = new RequestHandler();
+
+    private LinearLayout calendarLayout, detailLayout;
+    private MaterialCalendarView materialCalendarView;
+    private TimePicker timePicker;
+    private EditText titleText, contentText;
+    private CheckBox shareCheck;
+    private Button addButton, detailButton;
+
+    @Override
+    public void onActivityCreated(Bundle b) {
+        super.onActivityCreated(b);
+
+        calendarLayout = (LinearLayout) getView().findViewById(R.id.addfragment_linearlayout_calendarlayout);
+        detailLayout = (LinearLayout) getView().findViewById(R.id.addfragment_linearlayout_detaillayout);
+        materialCalendarView = (MaterialCalendarView) getView().findViewById(R.id.addfragment_calendarview_date);
+        timePicker = (TimePicker) getView().findViewById(R.id.addfragment_timepicker_time);
+        titleText = (EditText) getView().findViewById(R.id.addfragment_edittext_title);
+        contentText = (EditText) getView().findViewById(R.id.addfragment_edittext_content);
+        shareCheck = (CheckBox) getView().findViewById(R.id.addfragment_checkbox_share);
+        addButton = (Button) getView().findViewById(R.id.addfragment_button_add);
+        detailButton = (Button) getView().findViewById(R.id.addfragment_button_detail);
+
+        //detailLayout.setVisibility(View.VISIBLE);
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(getView().getContext(), "일정 등록", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        detailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                calendarLayout.setVisibility(View.GONE);
+                detailLayout.setVisibility(View.VISIBLE);
+            }
+        });
+
+
+    }
+
+    @Override
+    public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
+
+    }
+
+    @Override
+    public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
+
     }
 
     @Override
