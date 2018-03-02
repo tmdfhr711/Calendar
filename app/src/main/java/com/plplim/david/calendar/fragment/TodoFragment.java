@@ -185,6 +185,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
         @Override
         protected void onPreExecute() {
             target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/TodoList.php";
+            todoList.clear();
         }
 
         @Override
@@ -192,29 +193,14 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
             HashMap<String, String> data = new HashMap<>();
 
             String query = params[0];
+            String group = "aaaaa";
 
             data.put("date", query);
+            data.put("group", group);
 
             String result = requestHandler.sendPostRequest(target, data);
 
-            try {
-                URL url = new URL(target);
-                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-                InputStream inputStream = httpURLConnection.getInputStream();
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-                String temp;
-                StringBuilder stringBuilder = new StringBuilder();
-                while ((temp = bufferedReader.readLine()) != null) {
-                    stringBuilder.append(temp + "\n");
-                }
-                bufferedReader.close();
-                inputStream.close();
-                httpURLConnection.disconnect();
-                return stringBuilder.toString().trim();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
+            return result;
         }
 
         @Override
@@ -224,15 +210,16 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                 Log.e("JSON RESULT", result.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("response");
                 int count = 0;
-                String todoTitle, todoContent, todoID, todoDate;
+                String todoTitle, todoContent, todoID, todoDate, todoTime;
                 while (count < jsonArray.length()) {
                     JSONObject object = jsonArray.getJSONObject(count);
                     todoTitle = object.getString("todoTitle");
                     todoContent = object.getString("todoContent");
                     todoID = object.getString("todoID");
                     todoDate = object.getString("todoDate");
+                    todoTime = object.getString("todoTime");
                     Log.e("todoTitle", todoTitle);
-                    Todo todo = new Todo(todoID, todoTitle, todoContent, todoDate);
+                    Todo todo = new Todo(todoID, todoTitle, todoContent, todoDate, todoTime);
                     todoList.add(todo);
                     count++;
                 }

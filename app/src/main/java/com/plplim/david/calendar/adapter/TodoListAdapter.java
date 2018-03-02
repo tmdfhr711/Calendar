@@ -49,7 +49,7 @@ public class TodoListAdapter extends BaseAdapter {
 
         titleText.setText(todoList.get(i).getTitle());
         idText.setText(todoList.get(i).getId());
-        dateText.setText(todoList.get(i).getDate());
+        dateText.setText(todoList.get(i).getDate() + " " + todoList.get(i).getTime());
 
         v.setTag(todoList.get(i).getTitle());
 

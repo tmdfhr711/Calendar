@@ -9,12 +9,14 @@ public class Todo {
     public String title;
     public String content;
     public String date;
+    public String time;
 
-    public Todo(String id, String title, String content, String date) {
+    public Todo(String id, String title, String content, String date, String time) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.date = date;
+        this.time = time;
     }
 
     public String getId() {
@@ -47,5 +49,13 @@ public class Todo {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
     }
 }
