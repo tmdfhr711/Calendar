@@ -26,6 +26,7 @@ import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
 import com.plplim.david.calendar.util.SaturdayDecorator;
+import com.plplim.david.calendar.util.SharedPreferenceUtil;
 import com.plplim.david.calendar.util.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -95,6 +96,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
 
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
     private RequestHandler requestHandler = new RequestHandler();
+    private SharedPreferenceUtil sharedPreferenceUtil;
 
     private LinearLayout calendarLayout, detailLayout;
     private MaterialCalendarView materialCalendarView;
@@ -119,7 +121,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         shareCheck = (CheckBox) getView().findViewById(R.id.addfragment_checkbox_share);
         addButton = (Button) getView().findViewById(R.id.addfragment_button_add);
         detailButton = (Button) getView().findViewById(R.id.addfragment_button_detail);
-
+        sharedPreferenceUtil = new SharedPreferenceUtil(getView().getContext());
         timePicker.setIs24HourView(false);
         timePicker.setOnTimeChangedListener(this);
 
@@ -164,7 +166,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         detailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedDay <= 0 || selectedMonth <= 0 || selectedYear <= 0) {
+                if (selectedDay < 0 || selectedMonth < 0 || selectedYear < 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
                     dialog = builder.setMessage("먼저 날짜를 선택해주세요")
                             .setNegativeButton("확인", null)
@@ -185,7 +187,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
         selectedYear = date.getYear();
-        selectedMonth = date.getMonth();
+        selectedMonth = date.getMonth() + 1;
         selectedDay = date.getDay();
     }
 
@@ -262,8 +264,8 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             data.put("time", time);
             data.put("title", title);
             data.put("content", content);
-            data.put("userID", "a");
-            data.put("group", "a");
+            data.put("userID", sharedPreferenceUtil.getValue("userID", ""));
+            data.put("group", sharedPreferenceUtil.getValue("userGroup", ""));
             data.put("share", share);
 
             String result = requestHandler.sendPostRequest(target, data);
@@ -282,6 +284,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
+                                    getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, new TodoFragment()).commit();
                                 }
                             })
                             .create();

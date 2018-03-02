@@ -1,14 +1,20 @@
 package com.plplim.david.calendar.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import com.plplim.david.calendar.R;
+import com.plplim.david.calendar.activity.LoginActivity;
+import com.plplim.david.calendar.util.SharedPreferenceUtil;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,6 +65,27 @@ public class AccountFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+    private Button logoutButton;
+    private SharedPreferenceUtil sharedPreferenceUtil;
+    @Override
+    public void onActivityCreated(Bundle b) {
+        super.onActivityCreated(b);
+        sharedPreferenceUtil = new SharedPreferenceUtil(getView().getContext());
+
+        logoutButton = (Button) getView().findViewById(R.id.accountfragment_button_logout);
+        logoutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sharedPreferenceUtil.removeAllValue();
+                sharedPreferenceUtil.put("loginStatus", "logout");
+                Log.e("share", sharedPreferenceUtil.getValue("loginStatus", "null"));
+                Intent intent = new Intent(getView().getContext(), LoginActivity.class);
+                startActivity(intent);
+                ((Activity)getView().getContext()).finish();
+            }
+        });
     }
 
     @Override

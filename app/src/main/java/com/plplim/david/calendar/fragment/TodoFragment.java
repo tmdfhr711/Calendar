@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import com.plplim.david.calendar.R;
+import com.plplim.david.calendar.activity.LoginActivity;
 import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
 import com.plplim.david.calendar.util.SaturdayDecorator;
+import com.plplim.david.calendar.util.SharedPreferenceUtil;
 import com.plplim.david.calendar.util.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -101,6 +103,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
     private MaterialCalendarView materialCalendarView;
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
     private RequestHandler requestHandler = new RequestHandler();
+    private SharedPreferenceUtil sharedPreferenceUtil;
     @Override
     public void onActivityCreated(Bundle b) {
         super.onActivityCreated(b);
@@ -108,7 +111,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
         todoListview = (ListView) getView().findViewById(R.id.todofragment_listview);
         todoList = new ArrayList<Todo>();
         materialCalendarView = (MaterialCalendarView) getView().findViewById(R.id.todofragment_calendarview);
-
+        sharedPreferenceUtil = new SharedPreferenceUtil(getView().getContext());
         //init Calendar
         materialCalendarView.setOnDateChangedListener(this);
         materialCalendarView.setOnMonthChangedListener(this);
@@ -127,23 +130,13 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        new BackgroundTask().execute(getSelecteDateString());
+        String query = String.valueOf(date.getYear()) + "/" + String.valueOf(date.getMonth() + 1) + "/" + String.valueOf(date.getDay());
+        new BackgroundTask().execute(query);
     }
 
     @Override
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
 
-    }
-
-    private String getSelecteDateString(){
-        CalendarDay date = materialCalendarView.getSelectedDate();
-        if(date == null)
-            return "No Selection";
-
-        //String getData = FORMATTER.format(date.getDate());
-        String getDate = date.getDay() + "/" + date.getMonth() + "/" + date.getYear();
-
-        return getDate;
     }
 
     @Override
@@ -196,7 +189,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
             HashMap<String, String> data = new HashMap<>();
 
             String query = params[0];
-            String group = "aaaaa";
+            String group = sharedPreferenceUtil.getValue("userGroup","");
 
             data.put("date", query);
             data.put("group", group);
