@@ -14,6 +14,7 @@ import android.widget.Button;
 
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.LoginActivity;
+import com.plplim.david.calendar.util.SendPushApi;
 import com.plplim.david.calendar.util.SharedPreferenceUtil;
 
 /**
@@ -67,7 +68,7 @@ public class AccountFragment extends Fragment {
         }
     }
 
-    private Button logoutButton;
+    private Button logoutButton, pushButton;
     private SharedPreferenceUtil sharedPreferenceUtil;
     @Override
     public void onActivityCreated(Bundle b) {
@@ -84,6 +85,15 @@ public class AccountFragment extends Fragment {
                 Intent intent = new Intent(getView().getContext(), LoginActivity.class);
                 startActivity(intent);
                 ((Activity)getView().getContext()).finish();
+            }
+        });
+
+        pushButton = (Button) getView().findViewById(R.id.accountfragment_button_push);
+        pushButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SendPushApi api = new SendPushApi(getView().getContext());
+                api.execute("title", "content", "date", "time","a", "a");
             }
         });
     }

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "242362751552",
+    "firebase_url": "https://calendar-a0fcd.firebaseio.com",
+    "project_id": "calendar-a0fcd",
+    "storage_bucket": "calendar-a0fcd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242362751552:android:9e0149d421de3582",
+        "android_client_info": {
+          "package_name": "com.plplim.david.calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242362751552-2g6lp444ev8n1vv7aghert5obg613jv4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.plplim.david.calendar",
+            "certificate_hash": "04a7a6751da05aa8143f4e9d6c338c135c3a6c69"
+          }
+        },
+        {
+          "client_id": "242362751552-p5efc5ag3qfvslb87lbuo87r9uuu4h48.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBws52XoUrc9RzkUAJuR20z6vfibjCKlsQ"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242362751552-p5efc5ag3qfvslb87lbuo87r9uuu4h48.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

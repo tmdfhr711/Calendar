@@ -56,6 +56,8 @@ public class LoginActivity extends AppCompatActivity {
         Log.e("LoginStatus", sharedPreferenceUtil.getValue("loginStatus", ""));
         if (sharedPreferenceUtil.getValue("loginStatus", "").equals("login")) {
             //로그인 상태인 경우
+            Log.e("userID", sharedPreferenceUtil.getValue("userID", "userID"));
+            Log.e("userGroup", sharedPreferenceUtil.getValue("userGroup", "userGroup"));
             Intent intent = new Intent(LoginActivity.this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -81,6 +83,7 @@ public class LoginActivity extends AppCompatActivity {
                                             public void onClick(DialogInterface dialogInterface, int i) {
                                                 UserInformationApi userInfo = new UserInformationApi(LoginActivity.this);
                                                 userInfo.execute(userID);
+                                                sharedPreferenceUtil.put("loginStatus", "login");
                                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                                 startActivity(intent);
                                                 finish();

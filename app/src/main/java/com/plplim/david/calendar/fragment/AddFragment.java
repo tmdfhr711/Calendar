@@ -26,6 +26,7 @@ import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
 import com.plplim.david.calendar.util.SaturdayDecorator;
+import com.plplim.david.calendar.util.SendPushApi;
 import com.plplim.david.calendar.util.SharedPreferenceUtil;
 import com.plplim.david.calendar.util.SundayDecorator;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
@@ -107,7 +108,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
 
     private AlertDialog dialog;
 
-    private int selectedDay = 0, selectedMonth = 0, selectedYear = 0, selectedHour = 0, selectedMinute = 0;
+    private int selectedDay = -1, selectedMonth = -1, selectedYear = -1, selectedHour = -1, selectedMinute = -1;
     @Override
     public void onActivityCreated(Bundle b) {
         super.onActivityCreated(b);
@@ -264,8 +265,8 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             data.put("time", time);
             data.put("title", title);
             data.put("content", content);
-            data.put("userID", sharedPreferenceUtil.getValue("userID", ""));
-            data.put("group", sharedPreferenceUtil.getValue("userGroup", ""));
+            data.put("userID", sharedPreferenceUtil.getValue("userID", "userID"));
+            data.put("group", sharedPreferenceUtil.getValue("userGroup", "userGroup"));
             data.put("share", share);
 
             String result = requestHandler.sendPostRequest(target, data);
@@ -285,6 +286,8 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                     getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, new TodoFragment()).commit();
+                                    //SendPushApi sendPushApi = new SendPushApi(getView().getContext());
+                                    //sendPushApi.execute(title, content, date, time);
                                 }
                             })
                             .create();

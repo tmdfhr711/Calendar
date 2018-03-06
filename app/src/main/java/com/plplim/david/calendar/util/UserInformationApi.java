@@ -58,6 +58,7 @@ public class UserInformationApi extends AsyncTask<String, Void, String> {
                 userEmail = object.getString("userEmail");
                 userGroup = object.getString("userGroup");
                 userAuth = object.getString("userAuth");
+                count++;
             }
             sharedPreferenceUtil.put("userNum", userNum);
             sharedPreferenceUtil.put("userID", userID);
@@ -65,7 +66,6 @@ public class UserInformationApi extends AsyncTask<String, Void, String> {
             sharedPreferenceUtil.put("userEmail", userEmail);
             sharedPreferenceUtil.put("userGroup", userGroup);
             sharedPreferenceUtil.put("userAuth", userAuth);
-            sharedPreferenceUtil.put("loginStatus", "login");
         } catch (Exception e) {
             e.printStackTrace();
         }

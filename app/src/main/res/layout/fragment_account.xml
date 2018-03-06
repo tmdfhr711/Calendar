@@ -16,4 +16,16 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"/>
 
+    <Button
+        android:id="@+id/accountfragment_button_push"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/accountfragment_button_logout"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:textColor="#ffffff"
+        android:text="PUSH 보내기"
+        android:background="@color/colorPrimary"
+        android:layout_marginBottom="8dp"/>
+
 </RelativeLayout>
