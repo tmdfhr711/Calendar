@@ -20,9 +20,12 @@ import android.widget.LinearLayout;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.gson.Gson;
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.RegisterActivity;
 import com.plplim.david.calendar.adapter.TodoListAdapter;
+import com.plplim.david.calendar.model.NotificationModel;
 import com.plplim.david.calendar.model.Todo;
 import com.plplim.david.calendar.util.RequestHandler;
 import com.plplim.david.calendar.util.SaturdayDecorator;
@@ -38,10 +41,19 @@ import com.prolificinteractive.materialcalendarview.OnMonthChangedListener;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -239,13 +251,51 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         void onFragmentInteraction(Uri uri);
     }
 
+    void sendGcm(String title, String text, String to){
+        Gson gson = new Gson();
+
+        String[] tokens = to.split(",");
+        NotificationModel notificationModel = new NotificationModel();
+        for(int i = 0; i <= tokens.length - 1; i++) {
+            Log.e("token[" + String.valueOf(i) + "]", tokens[i]);
+            notificationModel.to = tokens[i];
+            notificationModel.notification.title = title;
+            notificationModel.notification.text = text;
+            notificationModel.data.title = title;
+            notificationModel.data.text = text;
+
+            RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel));
+            Request request = new Request.Builder()
+                    .header("Content-Type", "application/json")
+                    .addHeader("Authorization", "key=AIzaSyBFb4FwrWp_CnpFRqIcIhVfoZQ1_kMnIMk")
+                    .url("https://gcm-http.googleapis.com/gcm/send")
+                    .post(requestBody)
+                    .build();
+
+            OkHttpClient okHttpClient = new OkHttpClient();
+            okHttpClient.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(Call call, IOException e) {
+
+                }
+
+                @Override
+                public void onResponse(Call call, Response response) throws IOException {
+
+                }
+            });
+        }
+
+
+    }
+
     class BackgroundTask extends AsyncTask<Void, Void, String> {
 
         String target;
         String date, time, title, content,share;
         @Override
         protected void onPreExecute() {
-            target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/AddTodo.php";
+            target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/TodoAdd.php";
             date = String.valueOf(selectedYear) + "/" + String.valueOf(selectedMonth) + "/" + String.valueOf(selectedDay);
             time = String.valueOf(selectedHour) + ":" + String.valueOf(selectedMinute);
             if (shareCheck.isChecked()) {
@@ -268,16 +318,17 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             data.put("userID", sharedPreferenceUtil.getValue("userID", "userID"));
             data.put("group", sharedPreferenceUtil.getValue("userGroup", "userGroup"));
             data.put("share", share);
+            data.put("userAuth", FirebaseInstanceId.getInstance().getToken());
 
             String result = requestHandler.sendPostRequest(target, data);
-
+            Log.e("TodoAdd result", result);
             return result;
         }
 
         @Override
         protected void onPostExecute(String result) {
             try {
-                JSONObject jsonResponse = new JSONObject(result);
+                /*JSONObject jsonResponse = new JSONObject(result);
                 boolean success = jsonResponse.getBoolean("success");
                 if (success) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
@@ -288,6 +339,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                                     getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, new TodoFragment()).commit();
                                     //SendPushApi sendPushApi = new SendPushApi(getView().getContext());
                                     //sendPushApi.execute(title, content, date, time);
+                                    sendGcm();
                                 }
                             })
                             .create();
@@ -299,10 +351,28 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                             .setNegativeButton("확인", null)
                             .create();
                     dialog.show();
+                }*/
+                JSONObject jsonObject = new JSONObject(result);
+                Log.e("JSON RESULT", result.toString());
+                JSONArray jsonArray = jsonObject.getJSONArray("response");
+                int count = 0;
+                String userNum = "", userID = "", userPassword = "", userEmail = "", userGroup = "", userAuth = "";
+                JSONObject object = jsonArray.getJSONObject(count);
+                boolean success = object.getBoolean("success");
+                String tokens = object.getString("tokens");
+                tokens = tokens.replaceAll("\"", "");
+                tokens = tokens.replaceAll("\\[", "");
+                tokens = tokens.replaceAll("]", "");
+                Log.e("tokens", tokens);
+                Log.e("success", String.valueOf(success));
+                if (success) {
+                    sendGcm(title, content, tokens);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+
+
         }
     }
 }

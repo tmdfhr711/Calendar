@@ -11,6 +11,7 @@ import android.widget.EditText;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.util.IdValidateRequest;
 import com.plplim.david.calendar.util.RegisterRequest;
@@ -102,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity{
                 String userPassword = passwordText.getText().toString();
                 String userEmail = emailText.getText().toString();
                 String userGroup = groupText.getText().toString();
-                String userAuth = "auth";
+                String userAuth = FirebaseInstanceId.getInstance().getToken();
 
 
                 //ID 중복확인을 하지 않았을 경우
