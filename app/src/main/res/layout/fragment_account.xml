@@ -4,6 +4,82 @@
     android:layout_height="match_parent"
     tools:context="com.plplim.david.calendar.fragment.AccountFragment">
 
+    <LinearLayout
+        android:id="@+id/accountfragment_linearlayout_top"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:background="@color/colorPrimary"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/accountfragment_imageview_profile"
+            android:src="@drawable/ic_launcher_background"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_marginTop="50dp"/>
+
+        <TextView
+            android:id="@+id/accountfragment_textview_id"
+            android:text="아이디"
+            android:layout_marginTop="16dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/accountfragment_textview_email"
+            android:text="email@email.com"
+            android:layout_marginTop="8dp"
+            android:textColor="#ffffff"
+            android:textStyle="bold"
+            android:drawableStart="@drawable/ic_mail_outline_black_24dp"
+            android:drawableLeft="@drawable/ic_mail_outline_black_24dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_above="@+id/accountfragment_button_logout"
+        android:layout_below="@+id/accountfragment_linearlayout_top"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentLeft="true"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:background="@color/colorAccent"
+            android:text="내정보 수정"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:padding="16dp"
+            android:drawableStart="@drawable/ic_person_black_24dp"
+            android:drawableLeft="@drawable/ic_person_black_24dp"
+            android:drawablePadding="10dp"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:background="@color/colorAccent"
+            android:text="내 일정 목록"
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:padding="16dp"
+            android:layout_marginTop="16dp"
+            android:drawableStart="@drawable/ic_person_black_24dp"
+            android:drawableLeft="@drawable/ic_person_black_24dp"
+            android:drawablePadding="10dp"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
     <!-- TODO: Update blank fragment layout -->
     <Button
         android:id="@+id/accountfragment_button_logout"

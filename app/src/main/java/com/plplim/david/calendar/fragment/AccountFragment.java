@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.LoginActivity;
@@ -69,12 +70,17 @@ public class AccountFragment extends Fragment {
     }
 
     private Button logoutButton;
+    private TextView userIdText;
+    private TextView userEmailText;
     private SharedPreferenceUtil sharedPreferenceUtil;
     @Override
     public void onActivityCreated(Bundle b) {
         super.onActivityCreated(b);
         sharedPreferenceUtil = new SharedPreferenceUtil(getView().getContext());
-
+        userIdText = (TextView) getView().findViewById(R.id.accountfragment_textview_id);
+        userEmailText = (TextView) getView().findViewById(R.id.accountfragment_textview_email);
+        userIdText.setText(sharedPreferenceUtil.getValue("userID", ""));
+        userEmailText.setText(sharedPreferenceUtil.getValue("userEmail", ""));
         logoutButton = (Button) getView().findViewById(R.id.accountfragment_button_logout);
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
