@@ -261,8 +261,12 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             notificationModel.to = tokens[i];
             notificationModel.notification.title = title;
             notificationModel.notification.text = text;
+            notificationModel.notification.sound = "default";
+            notificationModel.notification.priority = "high";
             notificationModel.data.title = title;
             notificationModel.data.text = text;
+            notificationModel.data.sound = "default";
+            notificationModel.data.priority = "high";
 
             RequestBody requestBody = RequestBody.create(MediaType.parse("application/json; charset=utf8"), gson.toJson(notificationModel));
             Request request = new Request.Builder()
@@ -336,7 +340,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                             .setPositiveButton("확인", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialogInterface, int i) {
-                                    getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, new TodoFragment()).commit();
+
                                     //SendPushApi sendPushApi = new SendPushApi(getView().getContext());
                                     //sendPushApi.execute(title, content, date, time);
                                     sendGcm();
@@ -366,7 +370,25 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                 Log.e("tokens", tokens);
                 Log.e("success", String.valueOf(success));
                 if (success) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("일정 등록에 성공했습니다")
+                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    //성공했을 시 Fragment이동
+                                    getFragmentManager().beginTransaction().replace(R.id.mainactivity_framelayout, new TodoFragment()).commit();
+                                }
+                            })
+                            .create();
+                    dialog.show();
                     sendGcm(title, content, tokens);
+
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                    dialog = builder.setMessage("일정 등록에 실패했습니다")
+                            .setNegativeButton("확인", null)
+                            .create();
+                    dialog.show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

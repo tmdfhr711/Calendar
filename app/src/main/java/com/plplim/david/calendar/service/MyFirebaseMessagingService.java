@@ -30,9 +30,12 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
+        String title = remoteMessage.getData().get("title").toString();
+        String text = remoteMessage.getData().get("text").toString();
         if (remoteMessage.getData().size() > 0) {
-            String title = remoteMessage.getData().get("title").toString();
-            String text = remoteMessage.getData().get("text").toString();
+
+            sendNotification(title, text);
+        } else {
             sendNotification(title, text);
         }
     }
@@ -50,6 +53,7 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                         .setContentTitle(title)
                         .setContentText(text)
                         .setAutoCancel(true)
+                        .setWhen(1000)
                         .setSound(defaultSoundUri)
                         .setPriority(Notification.PRIORITY_HIGH)
                         .setContentIntent(pendingIntent);

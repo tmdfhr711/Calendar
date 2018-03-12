@@ -45,6 +45,7 @@
                 <EditText
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
+                    android:inputType="text"
                     android:hint="아이디"
                     android:layout_gravity="center"
                     android:padding="10dp"
@@ -110,6 +111,7 @@
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:hint="그룹"
+                    android:inputType="text"
                     android:layout_gravity="center"
                     android:padding="10dp"
                     android:textColor="#ffffff"
