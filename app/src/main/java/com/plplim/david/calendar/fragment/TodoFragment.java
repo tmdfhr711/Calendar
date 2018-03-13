@@ -1,6 +1,7 @@
 package com.plplim.david.calendar.fragment;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,10 +13,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.android.volley.Response;
+import com.google.gson.Gson;
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.LoginActivity;
 import com.plplim.david.calendar.adapter.TodoListAdapter;
 import com.plplim.david.calendar.model.Todo;
+import com.plplim.david.calendar.util.EventDecorator;
 import com.plplim.david.calendar.util.RequestHandler;
 import com.plplim.david.calendar.util.SaturdayDecorator;
 import com.plplim.david.calendar.util.SharedPreferenceUtil;
@@ -125,7 +129,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                 .commit();
 
         materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
-        //new BackgroundTask().execute();
+        new AllTodoListTask().execute();
     }
 
     @Override
@@ -138,6 +142,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
     public void onMonthChanged(MaterialCalendarView widget, CalendarDay date) {
 
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -221,6 +226,57 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                 }
                 todoListAdapter = new TodoListAdapter(getActivity().getApplicationContext(), todoList);
                 todoListview.setAdapter(todoListAdapter);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    class AllTodoListTask extends AsyncTask<String, Void, String> {
+
+        String target;
+        ArrayList<CalendarDay> days = new ArrayList<>();
+        @Override
+        protected void onPreExecute() {
+            target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/GroupTodoList.php";
+            todoList.clear();
+        }
+
+        @Override
+        protected String doInBackground(String... params) {
+            HashMap<String, String> data = new HashMap<>();
+
+            String group = sharedPreferenceUtil.getValue("userGroup","");
+
+            data.put("group", group);
+
+            String result = requestHandler.sendPostRequest(target, data);
+
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                Log.e("JSON RESULT", result.toString());
+                JSONArray jsonArray = jsonObject.getJSONArray("response");
+                int count = 0;
+                String todoTitle, todoContent, todoID, todoDate, todoTime;
+                while (count < jsonArray.length()) {
+                    JSONObject object = jsonArray.getJSONObject(count);
+                    todoTitle = object.getString("todoTitle");
+                    todoContent = object.getString("todoContent");
+                    todoID = object.getString("todoID");
+                    todoDate = object.getString("todoDate");
+                    todoTime = object.getString("todoTime");
+                    Log.e("todoTitle", todoTitle);
+                    String[] date = todoDate.split("/");
+                    CalendarDay day = CalendarDay.from(Integer.parseInt(date[0]), Integer.parseInt(date[1]) - 1, Integer.parseInt(date[2]));
+                    days.add(day);
+                    count++;
+                }
+                materialCalendarView.addDecorator(new EventDecorator(Color.RED, days));
             } catch (Exception e) {
                 e.printStackTrace();
             }
