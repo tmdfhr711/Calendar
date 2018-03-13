@@ -7,10 +7,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.android.volley.Response;
@@ -102,7 +104,7 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
     private ListView todoListview;
     private TodoListAdapter todoListAdapter;
     private List<Todo> todoList;
-
+    private AlertDialog dialog;
     //Create CalendarView
     private MaterialCalendarView materialCalendarView;
     private static final DateFormat FORMATTER = SimpleDateFormat.getDateInstance();
@@ -130,6 +132,22 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
 
         materialCalendarView.addDecorators(new SundayDecorator(), new SaturdayDecorator());
         new AllTodoListTask().execute();
+        todoListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long rowId) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
+                String title = ((Todo)todoListAdapter.getItem(position)).title;
+                String content = ((Todo)todoListAdapter.getItem(position)).content;
+                String id = ((Todo)todoListAdapter.getItem(position)).id;
+                dialog = builder
+                        .setTitle(title)
+                        .setMessage(content + "\n\n\n" + "작성자 : " + id)
+                        .setIcon(R.drawable.ic_textsms_white_24dp)
+                        .setNegativeButton("확인", null)
+                        .create();
+                dialog.show();
+            }
+        });
     }
 
     @Override
@@ -259,7 +277,6 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
         protected void onPostExecute(String result) {
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                Log.e("JSON RESULT", result.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("response");
                 int count = 0;
                 String todoTitle, todoContent, todoID, todoDate, todoTime;
@@ -270,7 +287,6 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                     todoID = object.getString("todoID");
                     todoDate = object.getString("todoDate");
                     todoTime = object.getString("todoTime");
-                    Log.e("todoTitle", todoTitle);
                     String[] date = todoDate.split("/");
                     CalendarDay day = CalendarDay.from(Integer.parseInt(date[0]), Integer.parseInt(date[1]) - 1, Integer.parseInt(date[2]));
                     days.add(day);

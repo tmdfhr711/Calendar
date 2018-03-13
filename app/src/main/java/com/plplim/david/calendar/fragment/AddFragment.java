@@ -211,8 +211,10 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
 
     @Override
     public void onTimeChanged(TimePicker timePicker, int hourOfDay, int minute) {
+
         selectedHour = hourOfDay;
         selectedMinute = minute;
+
     }
 
     @Override
@@ -297,11 +299,31 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
 
         String target;
         String date, time, title, content,share;
+        String hour, minute;
         @Override
         protected void onPreExecute() {
             target = "http://plplim.ipdisk.co.kr:8000/todosharecalendar/TodoAdd.php";
-            date = String.valueOf(selectedYear) + "/" + String.valueOf(selectedMonth) + "/" + String.valueOf(selectedDay);
-            time = String.valueOf(selectedHour) + ":" + String.valueOf(selectedMinute);
+            //시간 및 분 모양 이쁘게 만들기
+            if (selectedHour < 10) {
+                hour = "0" + String.valueOf(selectedHour);
+            } else {
+                hour = String.valueOf(selectedHour);
+            }
+
+            if (selectedMinute < 10) {
+                minute = "0" + String.valueOf(selectedMinute);
+            } else {
+                minute = String.valueOf(selectedMinute);
+            }
+
+            if (selectedMonth < 10) {
+                date = String.valueOf(selectedYear) + "/" + "0"+String.valueOf(selectedMonth) + "/" + String.valueOf(selectedDay);
+            } else {
+                date = String.valueOf(selectedYear) + "/" + String.valueOf(selectedMonth) + "/" + String.valueOf(selectedDay);
+            }
+
+
+            time = hour + ":" + minute;
             if (shareCheck.isChecked()) {
                 share = "1";
             } else {
