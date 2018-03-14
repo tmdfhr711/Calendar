@@ -152,7 +152,13 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
 
     @Override
     public void onDateSelected(@NonNull MaterialCalendarView widget, @NonNull CalendarDay date, boolean selected) {
-        String query = String.valueOf(date.getYear()) + "/" + String.valueOf(date.getMonth() + 1) + "/" + String.valueOf(date.getDay());
+        String query;
+        if((date.getMonth() + 1) < 10){
+            query = String.valueOf(date.getYear()) + "/" + "0"+String.valueOf(date.getMonth() + 1) + "/" + String.valueOf(date.getDay());
+        } else {
+            query = String.valueOf(date.getYear()) + "/" + String.valueOf(date.getMonth() + 1) + "/" + String.valueOf(date.getDay());
+        }
+
         new BackgroundTask().execute(query);
     }
 

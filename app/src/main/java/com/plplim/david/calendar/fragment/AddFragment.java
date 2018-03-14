@@ -154,7 +154,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedHour <= 0 || selectedMinute <= 0) {
+                if (selectedHour <= 0 || selectedMinute < 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
                     dialog = builder.setMessage("먼저 시간을 선택해주세요")
                             .setNegativeButton("확인", null)
@@ -354,35 +354,11 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         @Override
         protected void onPostExecute(String result) {
             try {
-                /*JSONObject jsonResponse = new JSONObject(result);
-                boolean success = jsonResponse.getBoolean("success");
-                if (success) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
-                    dialog = builder.setMessage("일정 등록에 성공했습니다")
-                            .setPositiveButton("확인", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    //SendPushApi sendPushApi = new SendPushApi(getView().getContext());
-                                    //sendPushApi.execute(title, content, date, time);
-                                    sendGcm();
-                                }
-                            })
-                            .create();
-                    dialog.show();
-
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
-                    dialog = builder.setMessage("일정 등록에 실패했습니다")
-                            .setNegativeButton("확인", null)
-                            .create();
-                    dialog.show();
-                }*/
                 JSONObject jsonObject = new JSONObject(result);
                 Log.e("JSON RESULT", result.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("response");
                 int count = 0;
-                String userNum = "", userID = "", userPassword = "", userEmail = "", userGroup = "", userAuth = "";
+                //String userNum = "", userID = "", userPassword = "", userEmail = "", userGroup = "", userAuth = "";
                 JSONObject object = jsonArray.getJSONObject(count);
                 boolean success = object.getBoolean("success");
                 String tokens = object.getString("tokens");
@@ -403,7 +379,11 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                             })
                             .create();
                     dialog.show();
-                    sendGcm(title, content, tokens);
+                    if (share.equals("1")) {
+                        //공유한 글만 푸쉬 보내기
+                        sendGcm(title, content, tokens);
+                    }
+
 
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
