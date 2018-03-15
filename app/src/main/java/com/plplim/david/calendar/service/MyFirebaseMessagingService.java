@@ -1,5 +1,6 @@
 package com.plplim.david.calendar.service;
 
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -16,10 +17,13 @@ import com.google.firebase.messaging.RemoteMessage;
 import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.MainActivity;
 import com.plplim.david.calendar.model.NotificationModel;
+import com.plplim.david.calendar.util.AlarmReceive;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.Calendar;
 import java.util.Map;
 
 /**
@@ -32,11 +36,16 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String title = remoteMessage.getData().get("title").toString();
         String text = remoteMessage.getData().get("text").toString();
+        String date = remoteMessage.getData().get("date").toString();
+        String time = remoteMessage.getData().get("time").toString();
+
         if (remoteMessage.getData().size() > 0) {
 
             sendNotification(title, text);
+            registerAlarm(date, time);
         } else {
             sendNotification(title, text);
+            registerAlarm(date, time);
         }
     }
 
@@ -53,14 +62,56 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
                         .setContentTitle(title)
                         .setContentText(text)
                         .setAutoCancel(true)
-                        .setWhen(1000)
                         .setSound(defaultSoundUri)
-                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setPriority(Notification.PRIORITY_MAX)
                         .setContentIntent(pendingIntent);
 
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    private void registerAlarm(String date, String time) {
+        Log.e("registerAlarm", "date : " + date);
+        Log.e("registerAlarm", "time : " + time);
+
+        AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(this, AlarmReceive.class);
+        PendingIntent pender = PendingIntent.getBroadcast(this, 0, intent, 0);
+
+        Calendar calendar = Calendar.getInstance();
+        //받아온 데이터
+        int year, month, day, hour, minute;
+
+        String[] getDate = date.split("/");
+        String[] getTime = time.split(":");
+        year = Integer.parseInt(getDate[0]);
+        month = Integer.parseInt(getDate[1]) - 1;   //Calendar 에서 1월은 0으로 시작함
+        day = Integer.parseInt(getDate[2]);
+        hour = Integer.parseInt(getTime[0]);
+        minute = Integer.parseInt(getTime[1]);
+
+        Log.e("RegisterAlarm", "Now : " + String.valueOf(calendar.get(Calendar.YEAR)) + "/" + String.valueOf(calendar.get(Calendar.MONTH)) +
+                "/" + String.valueOf(calendar.get(Calendar.DAY_OF_MONTH)) + "/" + String.valueOf(calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.valueOf(calendar.get(Calendar.MINUTE)));
+        Log.e("RegisterAlarm", "getDate : " + String.valueOf(year) + "/" + String.valueOf(month) +
+                "/" + String.valueOf(day) + "/" + String.valueOf(hour) + ":" + String.valueOf(minute));
+
+        //날짜가 오늘보다 이전일 경우
+        if (calendar.get(Calendar.YEAR) <= year && calendar.get(Calendar.MONTH) <= month && calendar.get(Calendar.DAY_OF_MONTH) <= day) {
+            //현재시간보다 이전일 경우만 알람등록
+            if(calendar.get(Calendar.HOUR_OF_DAY) <= hour && calendar.get(Calendar.MINUTE) < minute) {
+                calendar.set(year, month, day, hour, minute);
+
+                //알림을 한 시간 전에 설정하기
+                if(hour == 0){
+                    //hour를 23(오후 11시)로 설정 한뒤 calendar.set(hour - 1)
+                } else {
+                    //그냥 그대로 진행 calendar.set(hour)
+                }
+                alarm.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pender);
+
+            }
+        }
     }
 }

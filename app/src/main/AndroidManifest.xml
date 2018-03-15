@@ -26,6 +26,7 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
         <!-- [END fcm_default_icon] -->
+        <!--Activity Start-->
         <activity android:name=".activity.MainActivity">
         </activity>
         <activity android:name=".activity.LoginActivity">
@@ -36,6 +37,9 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.RegisterActivity"></activity>
+        <!--Activity End-->
+
+        <!--Service Start-->
         <service
             android:name=".service.MyFirebaseInstanceIDService">
             <intent-filter>
@@ -48,6 +52,15 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+        <!--Service End-->
+
+        <!--Receiver Start-->
+        <receiver
+            android:name=".util.AlarmReceive"
+            android:enabled="true"
+            android:exported="true" />
+
+        <!--Receiver End-->
     </application>
 
 </manifest>

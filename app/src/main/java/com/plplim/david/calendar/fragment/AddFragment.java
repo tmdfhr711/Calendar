@@ -253,7 +253,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         void onFragmentInteraction(Uri uri);
     }
 
-    void sendGcm(String title, String text, String to){
+    void sendGcm(String title, String text,String date, String time, String to){
         Gson gson = new Gson();
 
         String[] tokens = to.split(",");
@@ -261,12 +261,16 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         for(int i = 0; i <= tokens.length - 1; i++) {
             Log.e("token[" + String.valueOf(i) + "]", tokens[i]);
             notificationModel.to = tokens[i];
-            notificationModel.notification.title = title;
+            /*notificationModel.notification.title = title;
             notificationModel.notification.text = text;
+            notificationModel.notification.date = date;
+            notificationModel.notification.time = time;
             notificationModel.notification.sound = "default";
-            notificationModel.notification.priority = "high";
+            notificationModel.notification.priority = "high";*/
             notificationModel.data.title = title;
             notificationModel.data.text = text;
+            notificationModel.data.date = date;
+            notificationModel.data.time = time;
             notificationModel.data.sound = "default";
             notificationModel.data.priority = "high";
 
@@ -287,7 +291,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
-
+                    Log.e("SendGcm onResponse", response.toString());
                 }
             });
         }
@@ -381,7 +385,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
                     dialog.show();
                     if (share.equals("1")) {
                         //공유한 글만 푸쉬 보내기
-                        sendGcm(title, content, tokens);
+                        sendGcm(title, content, date, time,tokens);
                     }
 
 
