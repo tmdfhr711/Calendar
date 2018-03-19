@@ -40,23 +40,23 @@ public class MyFirebaseMessagingService extends com.google.firebase.messaging.Fi
         String text = remoteMessage.getData().get("text").toString();
         String date = remoteMessage.getData().get("date").toString();
         String time = remoteMessage.getData().get("time").toString();
-        String destination = remoteMessage.getData().get("destination").toString();
-
+        String sender = remoteMessage.getData().get("sender").toString();
+        Log.e("onMessageReceived", sharedPreferenceUtil.getValue("userAuth", ""));
         if (remoteMessage.getData().size() > 0) {
-            if (destination.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
+            if (sender.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
+                registerAlarm(date, time);
+            } else {
+                sendNotification(title, text);
+                registerAlarm(date, time);
+            }
+        } else {
+            if (sender.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
                 registerAlarm(date, time);
             } else {
                 sendNotification(title, text);
                 registerAlarm(date, time);
             }
 
-        } else {
-            if (destination.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
-                registerAlarm(date, time);
-            } else {
-                sendNotification(title, text);
-                registerAlarm(date, time);
-            }
         }
     }
 

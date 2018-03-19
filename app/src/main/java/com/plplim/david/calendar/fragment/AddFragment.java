@@ -271,7 +271,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             notificationModel.data.text = text;
             notificationModel.data.date = date;
             notificationModel.data.time = time;
-            notificationModel.data.destination = tokens[i];
+            notificationModel.data.sender = sharedPreferenceUtil.getValue("userAuth", "");
             notificationModel.data.sound = "default";
             notificationModel.data.priority = "high";
 

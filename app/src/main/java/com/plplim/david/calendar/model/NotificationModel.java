@@ -16,7 +16,7 @@ public class NotificationModel {
         public String text;
         public String date;
         public String time;
-        public String destination;
+        public String sender;
         public String sound;
         public String priority;
     }
@@ -25,7 +25,7 @@ public class NotificationModel {
         public String text;
         public String date;
         public String time;
-        public String destination;
+        public String sender;
         public String sound;
         public String priority;
     }
