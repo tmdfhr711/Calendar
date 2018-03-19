@@ -1,5 +1,6 @@
 package com.plplim.david.calendar.util;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 
@@ -26,7 +27,7 @@ public class RegisterRequest extends StringRequest{
     }
 
     @Override
-    public Map<String, String> getParams(){
+    public Map<String, String> getParams() throws AuthFailureError {
         return parameters;
     }
 }

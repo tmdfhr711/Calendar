@@ -154,7 +154,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (selectedHour <= 0 || selectedMinute < 0) {
+                if (selectedHour <  0 || selectedMinute < 0) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getView().getContext());
                     dialog = builder.setMessage("먼저 시간을 선택해주세요")
                             .setNegativeButton("확인", null)
@@ -271,6 +271,7 @@ public class AddFragment extends Fragment implements OnDateSelectedListener, OnM
             notificationModel.data.text = text;
             notificationModel.data.date = date;
             notificationModel.data.time = time;
+            notificationModel.data.destination = tokens[i];
             notificationModel.data.sound = "default";
             notificationModel.data.priority = "high";
 

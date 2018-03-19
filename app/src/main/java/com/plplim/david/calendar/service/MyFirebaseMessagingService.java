@@ -18,6 +18,7 @@ import com.plplim.david.calendar.R;
 import com.plplim.david.calendar.activity.MainActivity;
 import com.plplim.david.calendar.model.NotificationModel;
 import com.plplim.david.calendar.util.AlarmReceive;
+import com.plplim.david.calendar.util.SharedPreferenceUtil;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import org.json.JSONArray;
@@ -32,20 +33,30 @@ import java.util.Map;
 
 public class MyFirebaseMessagingService extends com.google.firebase.messaging.FirebaseMessagingService{
     private static final String TAG = MyFirebaseMessagingService.class.getSimpleName();
+    private SharedPreferenceUtil sharedPreferenceUtil = new SharedPreferenceUtil(this);
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         String title = remoteMessage.getData().get("title").toString();
         String text = remoteMessage.getData().get("text").toString();
         String date = remoteMessage.getData().get("date").toString();
         String time = remoteMessage.getData().get("time").toString();
+        String destination = remoteMessage.getData().get("destination").toString();
 
         if (remoteMessage.getData().size() > 0) {
+            if (destination.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
+                registerAlarm(date, time);
+            } else {
+                sendNotification(title, text);
+                registerAlarm(date, time);
+            }
 
-            sendNotification(title, text);
-            registerAlarm(date, time);
         } else {
-            sendNotification(title, text);
-            registerAlarm(date, time);
+            if (destination.equals(sharedPreferenceUtil.getValue("userAuth", ""))) {
+                registerAlarm(date, time);
+            } else {
+                sendNotification(title, text);
+                registerAlarm(date, time);
+            }
         }
     }
 
