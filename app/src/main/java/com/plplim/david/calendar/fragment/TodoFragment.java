@@ -235,16 +235,18 @@ public class TodoFragment extends Fragment implements OnDateSelectedListener, On
                 Log.e("JSON RESULT", result.toString());
                 JSONArray jsonArray = jsonObject.getJSONArray("response");
                 int count = 0;
-                String todoTitle, todoContent, todoID, todoDate, todoTime;
+                String todoNum,todoTitle, todoContent, todoID, todoDate, todoTime,share;
                 while (count < jsonArray.length()) {
                     JSONObject object = jsonArray.getJSONObject(count);
+                    todoNum = object.getString("todoNum");
                     todoTitle = object.getString("todoTitle");
                     todoContent = object.getString("todoContent");
                     todoID = object.getString("todoID");
                     todoDate = object.getString("todoDate");
                     todoTime = object.getString("todoTime");
+                    share = object.getString("share");
                     Log.e("todoTitle", todoTitle);
-                    Todo todo = new Todo(todoID, todoTitle, todoContent, todoDate, todoTime);
+                    Todo todo = new Todo(todoNum,todoID, todoTitle, todoContent, todoDate, todoTime,share);
                     todoList.add(todo);
                     count++;
                 }

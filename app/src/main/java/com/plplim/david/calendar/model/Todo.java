@@ -5,18 +5,30 @@ package com.plplim.david.calendar.model;
  */
 
 public class Todo {
+    public String num;
     public String id;
     public String title;
     public String content;
     public String date;
     public String time;
+    public String share;
 
-    public Todo(String id, String title, String content, String date, String time) {
+    public Todo(String num,String id, String title, String content, String date, String time, String share) {
+        this.num = num;
         this.id = id;
         this.title = title;
         this.content = content;
         this.date = date;
         this.time = time;
+        this.share = share;
+    }
+
+    public String getNum() {
+        return num;
+    }
+
+    public void setNum(String num) {
+        this.num = num;
     }
 
     public String getId() {
@@ -57,5 +69,13 @@ public class Todo {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public String getShare() {
+        return share;
+    }
+
+    public void setShare(String share) {
+        this.share = share;
     }
 }

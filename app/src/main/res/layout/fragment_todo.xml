@@ -27,10 +27,6 @@
             android:dividerHeight="10dp"
             android:divider="#ffffff"></ListView>
 
-        <ExpandableListView
-            android:layout_width="match_parent"
-            android:layout_height="0dp"></ExpandableListView>
-
     </LinearLayout>
 
 </FrameLayout>
